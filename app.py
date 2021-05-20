@@ -1,0 +1,35 @@
+from flask import Flask
+from string import Template
+from flask import Flask, render_template, request
+from flask import jsonify
+
+from utils import *
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+	return render_template('home.html')
+
+@app.route('/predict',methods=['POST'])
+def predict():
+  if request.method=='POST':
+    message = request.form['message']
+    p=pred(message,tokenizer,MODEL)  
+  return render_template('result.html',prediction = p)
+
+@app.route('/utterance',methods=['POST'])
+def utterance():
+  if request.method=='POST':
+    message = request.args.get('utterance','')
+
+    p=pred(message,tokenizer,MODEL)  
+
+  return jsonify(p)
+
+if __name__ == "__main__":
+	#decide what port to run the app in
+	port = int(os.environ.get('PORT', 5000))
+	#run the app locally on the givn port
+	app.run(host='0.0.0.0', port=port)
+	#optional if we want to run in debugging mode
+	#app.run(debug=True)
